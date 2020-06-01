@@ -28,3 +28,5 @@ caching results and then reusing them in subsequent calculations.
 To suppress that behaviour, a list of random numbers is instead used
 in this repository. That approach produces the expected O(n) 
 performance.
+
+<sub><sup>In loving memory of Grace Stacey (18/06/2003 - 01/01/2020)</sup></sub>
