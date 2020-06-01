@@ -1,6 +1,6 @@
 ''' 
 This repository runs a set of calculations to collect data on the
-time efficiency of some simple alorithms.
+time efficiency of some simple algorithms.
 
 To minimuse the effect of noise and other variations, in most cases
 the algorithms are run multiple times and the average times recorded.
@@ -15,19 +15,16 @@ import random
 import time
 import csv
 
-SIZE_OF_ARRAY = 10000000
-STEP = 100000
-CYCLES_TO_RUN = 20
+SIZE_OF_ARRAY = 10000
+STEP = 100
+CYCLES_TO_RUN = 2
+FIELDNAMES = ['range', 'average_time']
 
 # O(1)
-
-
-def access_element(numbers, index):
-    return numbers[index]
+def access_element(numbers):
+    return numbers[-1]
 
 # O(n)
-
-
 def sum(numbers):
     sum = 0
     for number in numbers:
@@ -35,16 +32,12 @@ def sum(numbers):
     return sum
 
 # O(log n)
-
-
 def divide(number):
     while number > 0:
         number /= 2
     return number
 
 # O(n^2)
-
-
 def nested_loops(numbers):
     products = []
     for i in numbers:
@@ -53,7 +46,7 @@ def nested_loops(numbers):
     return products
 
 
-def average_times(times):
+def calculate_average_times(times):
     average_times = []
     for i in range(len(times[0])):
         total = 0
@@ -61,8 +54,24 @@ def average_times(times):
             total += times[j][i]['time']
         average = total / len(times)
         average_times.append(
-            {'range': times[0][i]['range'], 'average_time': average})
+            {FIELDNAMES[0]: times[0][i][FIELDNAMES[0]],\
+                FIELDNAMES[1]: average})
     return average_times
+
+
+def generate_runtime_data(algorithm_to_run, numbers):
+    times = []
+    for j in range(CYCLES_TO_RUN):
+        new = []
+        for i in range(1, SIZE_OF_ARRAY, STEP):
+            values = numbers[0:i]
+            start = time.time_ns()
+            total = algorithm_to_run(values)
+            stop = time.time_ns()
+            new.append({'range': i, 'time': stop-start})
+        times.append(new)
+    times = calculate_average_times(times)
+    return times
 
 
 def save_to_csv(values, headers, filename):
@@ -73,55 +82,24 @@ def save_to_csv(values, headers, filename):
 
 
 def run_o_constant(numbers, filename):
-    times = []
-    for i in range(1, SIZE_OF_ARRAY, STEP):
-        start = time.time_ns()
-        number = access_element(numbers, i)
-        stop = time.time_ns()
-        times.append({'index': i, 'time': stop-start})
-    save_to_csv(times, ['index', 'time'], filename)
+    average_times = generate_runtime_data(access_element, numbers)
+    save_to_csv(average_times, FIELDNAMES, filename)
 
 
 def run_o_n(numbers, filename):
-    times = []
-    for j in range(CYCLES_TO_RUN):
-        new = []
-        for i in range(1, SIZE_OF_ARRAY, STEP):
-            start = time.time_ns()
-            total = sum(numbers[0:i])
-            stop = time.time_ns()
-            new.append({'range': i, 'time': stop-start})
-        times.append(new)
-    times = average_times(times)
-    save_to_csv(times, ['range', 'average_time'], filename)
+    average_times = generate_runtime_data(sum, numbers)
+    save_to_csv(average_times, FIELDNAMES, filename)
 
 
 def run_o_log_n(filename):
-    times = []
-    for j in range(CYCLES_TO_RUN):
-        new = []
-        for i in range(1, SIZE_OF_ARRAY, STEP):
-            start = time.time_ns()
-            total = divide(i)
-            stop = time.time_ns()
-            new.append({'range': i, 'time': stop-start})
-        times.append(new)
-    times = average_times(times)
-    save_to_csv(times, ['range', 'average_time'], filename)
+    numbers = [i for i in range(SIZE_OF_ARRAY)]
+    average_times = generate_runtime_data(divide, numbers)
+    save_to_csv(average_times, FIELDNAMES, filename)
 
 
 def run_o_n_pow_two(numbers, filename):
-    times = []
-    for j in range(CYCLES_TO_RUN//4):
-        new = []
-        for i in range(1, SIZE_OF_ARRAY/1000, STEP/1000):
-            start = time.time_ns()
-            total = nested_loops(numbers[0:i])
-            stop = time.time_ns()
-            new.append({'range': i, 'time': stop-start})
-        times.append(new)
-    times = average_times(times)
-    save_to_csv(times, ['range', 'average_time'], filename)
+    average_times = generate_runtime_data(nested_loops, numbers)
+    save_to_csv(average_times, FIELDNAMES, filename)
 
 
 if __name__ == '__main__':
@@ -132,6 +110,6 @@ if __name__ == '__main__':
         numbers.append(random.randrange(1, SIZE_OF_ARRAY))
 
     run_o_constant(numbers, 'o_constant.csv')
-    run_o_n(numbers, 'o_n.csv')
-    run_o_log_n('o_log_n.csv')
-    run_o_n_pow_two(numbers, 'quadratic.csv')
+    #run_o_n(numbers, 'o_n.csv')
+    #run_o_log_n('o_log_n.csv')
+    #run_o_n_pow_two(numbers, 'quadratic.csv')
