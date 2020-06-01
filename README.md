@@ -1,8 +1,7 @@
 # Big-O and Algorithm Time Complexity
 
-This repository contains a single Python file that runs a set of 
-algorithms to produce data for graphs that show the time complexity
-of the algorithms,
+This repository runs a set of algorithms to produce data for graphs 
+that show the time complexity of the algorithms,
 
 The algorithms used have been chosen because they show the specific
 time complexity desired for a particular graph.

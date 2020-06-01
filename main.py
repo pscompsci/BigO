@@ -15,9 +15,9 @@ import random
 import time
 import csv
 
-SIZE_OF_ARRAY = 10000
-STEP = 100
-CYCLES_TO_RUN = 2
+SIZE_OF_ARRAY = 10000000
+STEP = 100000
+CYCLES_TO_RUN = 20
 FIELDNAMES = ['range', 'average_time']
 
 # O(1)
@@ -110,6 +110,6 @@ if __name__ == '__main__':
         numbers.append(random.randrange(1, SIZE_OF_ARRAY))
 
     run_o_constant(numbers, 'o_constant.csv')
-    #run_o_n(numbers, 'o_n.csv')
-    #run_o_log_n('o_log_n.csv')
-    #run_o_n_pow_two(numbers, 'quadratic.csv')
+    run_o_n(numbers, 'o_n.csv')
+    run_o_log_n('o_log_n.csv')
+    run_o_n_pow_two(numbers, 'quadratic.csv')
